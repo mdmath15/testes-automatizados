@@ -16,8 +16,18 @@ class Person {
         }
     }
 
+    static save(person) {
+        if(!['cpf', 'name', 'lastName'].every(prop => person[prop])) {
+            throw new Error(`Cannot save invalid person: ${JSON.stringify(person)}`)
+        }
+
+        console.log('Person saved!', person)
+    }
+
     static process(person) {
         this.validate(person)
+        const formattedPerson = this.format(person)
+        this.save(formattedPerson)
        
         return 'ok'
     }
