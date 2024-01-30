@@ -55,7 +55,42 @@ describe('#Person Suite', () => {
     })
 
     describe('#save', () => {
+        it('should throw if the person does not have name prop', () => {
+            const mockPersonWithoutName = {
+                cpf: '12345678900',
+                lastName: 'da Silva'
+            }
 
+            expect(() => Person.save(mockPersonWithoutName)).toThrow('Cannot save invalid person')
+        })
+
+        it('should throw if the person does not have cpf prop', () => {
+            const mockPersonWithoutName = {
+                name: 'Zezinho',
+                lastName: 'da Silva'
+            }
+
+            expect(() => Person.save(mockPersonWithoutName)).toThrow('Cannot save invalid person')
+        })
+
+        it('should throw if the person does not have lastName prop', () => {
+            const mockPersonWithoutName = {
+                cpf: '12345678900',
+                lastName: 'da Silva'
+            }
+
+            expect(() => Person.save(mockPersonWithoutName)).toThrow('Cannot save invalid person')
+        })
+
+        it('should save a valid person when all required properties are present', () => {
+            const mockPerson = {
+              name: 'Zezinho',
+              cpf: '12345678900',
+              lastName: 'da Silva'
+            }
+      
+            expect(() => Person.save(mockPerson)).not.toThrow()
+          });
     })
 
     describe('#process', () => {
