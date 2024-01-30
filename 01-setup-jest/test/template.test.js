@@ -5,5 +5,5 @@ function sum(a, b) {
 }
 
 it('sums two values', () => {
-    expect(sum(1, 2)).toEqual(3) 
+    expect(sum(1, 2)).toBe(3) 
 })
