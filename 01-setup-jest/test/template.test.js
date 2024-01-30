@@ -1,7 +1,7 @@
 import { it } from '@jest/globals'
 
 function sum(a, b) {
-  return a + b + c
+  return a + b
 }
 
 it('sums two values', () => {
