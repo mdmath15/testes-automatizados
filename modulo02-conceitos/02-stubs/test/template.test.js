@@ -1,6 +1,7 @@
 import { it, expect, describe, beforeEach, jest } from '@jest/globals'
 import Service from '../src/service'
 import fs from 'node:fs/promises'
+import fsSync from 'node:fs'
 
 
 describe('Service Test Suit', () => {
@@ -22,7 +23,6 @@ describe('Service Test Suit', () => {
       ).mockResolvedValue('')
 
       const result = await _service.read()
-      console.log(result)
 
       expect(result).toEqual([])
     })
@@ -42,6 +42,12 @@ describe('Service Test Suit', () => {
         },
       ]
 
+      jest.spyOn(
+        fsSync,
+        fsSync.existsSync.name
+      ).mockReturnValue(true)
+      
+
       const fileContents = dbData
         .map(item => JSON.stringify(item).concat('\n')).join('')
 
@@ -56,6 +62,17 @@ describe('Service Test Suit', () => {
       // Assert
       const expectedResult = dbData.map(({password, ...rest}) => ({...rest}))
       expect(result).toEqual(expectedResult)
+    })
+
+    it('should return an empty array if the file does not exist', async () => {
+      jest.spyOn(
+        fsSync,
+        'existsSync'
+      ).mockReturnValue(false)
+
+      const result = await _service.read()
+
+      expect(result).toEqual([])
     })
   })
 })

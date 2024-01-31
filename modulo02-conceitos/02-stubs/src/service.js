@@ -1,5 +1,6 @@
 import crypto from 'node:crypto'
 import fs from 'node:fs/promises'
+import fsSync from 'node:fs'
 export default class Service {
     #filename
     constructor({filename}) {
@@ -24,6 +25,8 @@ export default class Service {
     }
 
     async read() {
+        if (!fsSync.existsSync(this.#filename)) return []
+       
         const lines = (await fs.readFile(this.#filename, 'utf-8'))
             .split('\n')
             .filter(line => !!line)
