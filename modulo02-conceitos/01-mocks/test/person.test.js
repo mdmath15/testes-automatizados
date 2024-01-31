@@ -95,6 +95,23 @@ describe('#Person Suite', () => {
 
     describe('#process', () => {
         it('should process a valid person', () => {
+            // Uma outra ideia é não retestar o que já foi testado
+
+            // lembra dos checkpoints?
+            // Testou do caminho A ao caminho B,
+            //      agora testa do caminho B ao caminho C
+            // Então aqui, eu pulo o caminho A (validate), caminho B (format)
+            // e vou direto para o caminho C (save) pois estes caminhos
+            // ja foram validados
+
+            // Este método abaixo faz mais sentido para quando se tem interações externas como
+            // chamadas de API, bancos de dados, etc (que será mostrado na próxima aula)
+
+            // Mocks são simulações de funções que você pode fazer ao testar o comportamento!!
+
+            /// AAA = Arrange, Act, Assert
+
+            //Arrange
             const mockPerson = {
                 name: 'Zezin da Silva', 
                 cpf: '123.456.789-00'
@@ -122,8 +139,10 @@ describe('#Person Suite', () => {
                 lastName: 'da Silva'
             })
 
+            //Act
             const result = Person.process(mockPerson)
 
+            //Assert
             const expected = 'ok'
             expect(result).toStrictEqual(expected)
         })
