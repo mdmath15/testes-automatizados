@@ -9,7 +9,7 @@ describe('Task Test Suite', () => {
   beforeEach(() => {
     logMock = jest.spyOn(
       console, 
-      console.log.name
+      'log'
     ).mockImplementation()
 
     _task = new Task()
@@ -54,6 +54,37 @@ describe('Task Test Suite', () => {
     // 4 + 2 + 4 = 10 as duas tarefas devem ser executadas
     expect(tasks.at(0).fn).toHaveBeenCalled()
     expect(tasks.at(1).fn).toHaveBeenCalled()
+
+    jest.useRealTimers()
+  })
+
+  it('should clear interval when no tasks are left', async () => {
+    jest.useFakeTimers()
+    //Arrange
+    const tasks = [
+      {
+        name: 'Task-Will-Run-In-5-Secs',
+        dueAt: new Date(Date.now() + 5000), // 5s
+        fn: jest.fn()
+      },
+      {
+        name: 'Task-Will-Run-In-10-Secs',
+        dueAt: new Date(Date.now() + 10000), // 10s
+        fn: jest.fn()
+      }
+    ]
+
+    jest.spyOn(global, 'clearInterval')
+
+    //Act
+    _task.save(tasks.at(0))
+    _task.save(tasks.at(1))
+
+    _task.run(200) // 200ms
+
+    jest.advanceTimersByTime(11000) // 11s
+  
+    expect(clearInterval).toHaveBeenCalledTimes(1)
 
     jest.useRealTimers()
   })
