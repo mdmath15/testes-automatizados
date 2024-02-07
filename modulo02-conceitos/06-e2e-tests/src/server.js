@@ -1,6 +1,7 @@
 import { createServer } from 'node:http'
 import { once } from 'node:events'
 import Person from './person.js'
+
 const server = createServer(async (request, response) => {
     if (request.method !== 'POST' || request.url !== '/persons') {
         response.writeHead(404)
@@ -15,6 +16,17 @@ const server = createServer(async (request, response) => {
 
     } catch (error) {
         if(error.message.includes('required')) {
+            response.writeHead(400)
+            response.write(
+                JSON.stringify({
+                    validationError: error.message
+                })
+            )
+            response.end()
+            return;
+        }
+
+        if(error.message.includes('Cannot save invalid person')) {
             response.writeHead(400)
             response.write(
                 JSON.stringify({

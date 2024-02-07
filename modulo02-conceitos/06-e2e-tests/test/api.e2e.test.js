@@ -1,4 +1,5 @@
 import { describe, it, expect, jest, beforeAll, afterAll } from '@jest/globals'
+import Person from '../src/person.js'
 
 function waitForServerStatus(server) {
     return new Promise((resolve, reject) => {
@@ -57,6 +58,7 @@ describe('E2E Test Suite', () => {
             })
             expect(response.status).toBe(404)
         })
+
         it('should return 400 and missing field message when body is invalid', async () => {
             const invalidPerson = { name: 'Fulano da Silva' } // Missing CPF
 
@@ -66,7 +68,37 @@ describe('E2E Test Suite', () => {
             })
             expect(response.status).toBe(400)
             const data = await response.json()
-            expect(data.validationError).toEqual('cpf is required')
+            expect(data.validationError).toEqual('CPF is required')
+        })
+
+        it('should return 400 and cannot save person doesnt have last name', async () => {
+            const invalidPerson = { name: 'Fulano', cpf: '123.456.768-06' } // Missing last name
+
+            const response = await fetch(`${_testServerAddress}/persons`, {
+                method: 'POST',
+                body: JSON.stringify(invalidPerson)
+            })
+            expect(response.status).toBe(400)
+            const data = await response.json()
+            expect(data.validationError).toEqual(`Cannot save invalid person: {"cpf":"12345676806","name":"Fulano","lastName":""}`)
+        })
+
+        it('should return 500 when error message doesnt have "required" ', async () => {
+            const person = { name: 'Fulano da Silva', cpf: '123.344.543-06' }
+
+            jest.spyOn(
+                Person,
+                Person.process.name
+            ).mockImplementation(() => {
+                throw new Error('Error from mock')
+            })
+
+            const response = await fetch(`${_testServerAddress}/persons`, {
+                method: 'POST',
+                body: JSON.stringify(person)
+            })
+
+            expect(response.status).toBe(500)
         })
     })
 
