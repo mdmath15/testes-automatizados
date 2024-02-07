@@ -71,6 +71,18 @@ describe('E2E Test Suite', () => {
             expect(data.validationError).toEqual('CPF is required')
         })
 
+        it('should return 400 and missing field message when body is invalid', async () => {
+            const invalidPerson = { name: '', cpf: '123.234.235-99'} // Missing name
+
+            const response = await fetch(`${_testServerAddress}/persons`, {
+                method: 'POST',
+                body: JSON.stringify(invalidPerson)
+            })
+            expect(response.status).toBe(400)
+            const data = await response.json()
+            expect(data.validationError).toEqual('Name is required')
+        })
+
         it('should return 400 and cannot save person doesnt have last name', async () => {
             const invalidPerson = { name: 'Fulano', cpf: '123.456.768-06' } // Missing last name
 
@@ -89,7 +101,7 @@ describe('E2E Test Suite', () => {
             jest.spyOn(
                 Person,
                 Person.process.name
-            ).mockImplementation(() => {
+            ).mockImplementationOnce(() => {
                 throw new Error('Error from mock')
             })
 
@@ -99,6 +111,19 @@ describe('E2E Test Suite', () => {
             })
 
             expect(response.status).toBe(500)
+            
+        })
+
+        it('should return 200 and save a person', async () => {
+            const person = { name: 'Fulano da Silva', cpf: '123.134.123-99' }
+
+            const response = await fetch(`${_testServerAddress}/persons`, {
+                method: 'POST',
+                body: JSON.stringify(person)
+            })
+            expect(response.status).toBe(200)
+            const data = await response.json()
+            expect(data).toEqual({result: 'ok'})
         })
     })
 
